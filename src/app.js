@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 
+import healthCheckRouter from "./routes/healthCheck.route.js";
+
 const app = express();
 
 app.use(
@@ -33,8 +35,6 @@ app.use(
   }),
 );
 
-app.get("/", (req, res) => {
-  res.send("API is running....");
-});
+app.use("/health", healthCheckRouter);
 
 export default app;
