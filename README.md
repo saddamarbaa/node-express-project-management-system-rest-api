@@ -5,11 +5,12 @@ A **RESTful backend API** built with **Node.js**, **Express**, **MongoDB**, and 
 ## 📘 Overview
 
 The **Project Management System API** enables teams to collaborate efficiently by providing endpoints for:
-- Project creation and management  
-- Task and subtask tracking  
-- Team member role management  
-- Project notes  
-- Secure user authentication  
+
+- Project creation and management
+- Task and subtask tracking
+- Team member role management
+- Project notes
+- Secure user authentication
 
 This service serves as the **backend foundation** for a complete project management application.
 
@@ -17,70 +18,77 @@ This service serves as the **backend foundation** for a complete project managem
 
 ## ⚙️ Tech Stack
 
-| Technology | Purpose |
-|-------------|----------|
-| **Node.js** | Runtime environment |
-| **Express.js** | Web framework for building REST APIs |
-| **MongoDB** | NoSQL database for data persistence |
+| Technology     | Purpose                                     |
+| -------------- | ------------------------------------------- |
+| **Node.js**    | Runtime environment                         |
+| **Express.js** | Web framework for building REST APIs        |
+| **MongoDB**    | NoSQL database for data persistence         |
 | **TypeScript** | Type safety and better code maintainability |
-| **JWT** | Secure authentication |
-| **Multer** | File uploads for task attachments |
-| **Nodemailer** | Email verification and password reset |
-| **bcrypt.js** | Password hashing and security |
+| **JWT**        | Secure authentication                       |
+| **Multer**     | File uploads for task attachments           |
+| **Nodemailer** | Email verification and password reset       |
+| **bcrypt.js**  | Password hashing and security               |
 
 ---
 
 ## 🚀 Features
 
 ### 👤 Authentication & Authorization
-- User registration with email verification  
-- JWT-based login/logout  
-- Password reset & change password  
-- Token refresh system  
+
+- User registration with email verification
+- JWT-based login/logout
+- Password reset & change password
+- Token refresh system
 - Role-based access control: `Admin`, `Project Admin`, `Member`
 
 ### 🗂️ Project Management
-- Create, update, delete projects (Admin only)  
-- View all projects with member count  
-- Access project details  
+
+- Create, update, delete projects (Admin only)
+- View all projects with member count
+- Access project details
 
 ### 👥 Member Management
-- Add or remove project members  
-- Update member roles (Admin only)  
-- View all project members  
+
+- Add or remove project members
+- Update member roles (Admin only)
+- View all project members
 
 ### ✅ Task Management
-- Create, view, update, and delete tasks  
-- Assign tasks to members  
-- Upload multiple file attachments  
+
+- Create, view, update, and delete tasks
+- Assign tasks to members
+- Upload multiple file attachments
 - Task status tracking (`Todo`, `In Progress`, `Done`)
 
 ### 🔄 Subtask Management
-- Create, update, and delete subtasks  
-- Members can mark subtasks as complete  
+
+- Create, update, and delete subtasks
+- Members can mark subtasks as complete
 
 ### 📝 Project Notes
-- Create and manage project notes (Admin only)  
-- View and update notes  
+
+- Create and manage project notes (Admin only)
+- View and update notes
 
 ### 💓 System Health
-- `/api/v1/healthcheck` endpoint for system monitoring  
+
+- `/api/v1/healthcheck` endpoint for system monitoring
 
 ---
 
 ## 🔐 Permission Matrix
 
 | Feature                    | Admin | Project Admin | Member |
-| --------------------------- | ----- | ------------- | ------ |
-| Create Project              | ✅    | ❌            | ❌     |
-| Update/Delete Project       | ✅    | ❌            | ❌     |
-| Manage Project Members      | ✅    | ❌            | ❌     |
-| Create/Update/Delete Tasks  | ✅    | ✅            | ❌     |
-| View Tasks                  | ✅    | ✅            | ✅     |
-| Update Subtask Status       | ✅    | ✅            | ✅     |
-| Create/Delete Subtasks      | ✅    | ✅            | ❌     |
-| Create/Update/Delete Notes  | ✅    | ❌            | ❌     |
-| View Notes                  | ✅    | ✅            | ✅     |
+| -------------------------- | ----- | ------------- | ------ |
+| Create Project             | ✅    | ❌            | ❌     |
+| Update/Delete Project      | ✅    | ❌            | ❌     |
+| Manage Project Members     | ✅    | ❌            | ❌     |
+| Create/Update/Delete Tasks | ✅    | ✅            | ❌     |
+| View Tasks                 | ✅    | ✅            | ✅     |
+| Update Subtask Status      | ✅    | ✅            | ✅     |
+| Create/Delete Subtasks     | ✅    | ✅            | ❌     |
+| Create/Update/Delete Notes | ✅    | ❌            | ❌     |
+| View Notes                 | ✅    | ✅            | ✅     |
 
 ---
 
@@ -114,6 +122,7 @@ node-express-project-management-system-rest-api/
 ### Example Routes
 
 **Auth Routes**
+
 ```
 POST   /api/v1/auth/register
 POST   /api/v1/auth/login
@@ -124,6 +133,7 @@ POST   /api/v1/auth/reset-password/:token
 ```
 
 **Project Routes**
+
 ```
 GET    /api/v1/projects/
 POST   /api/v1/projects/
@@ -133,6 +143,7 @@ DELETE /api/v1/projects/:projectId
 ```
 
 **Task Routes**
+
 ```
 GET    /api/v1/tasks/:projectId
 POST   /api/v1/tasks/:projectId
@@ -141,6 +152,7 @@ DELETE /api/v1/tasks/:projectId/t/:taskId
 ```
 
 **Notes**
+
 ```
 GET    /api/v1/notes/:projectId
 POST   /api/v1/notes/:projectId
@@ -200,11 +212,11 @@ All routes are prefixed with `/api/v1`.
 
 ## 📦 Future Enhancements
 
-- ✅ Email notifications for task assignments  
-- ✅ Activity logs for auditing  
-- ✅ Pagination and filtering for tasks and projects  
-- ✅ Cloud file storage (AWS S3, Cloudinary, etc.)  
-- ✅ WebSocket for real-time task updates  
+- ✅ Email notifications for task assignments
+- ✅ Activity logs for auditing
+- ✅ Pagination and filtering for tasks and projects
+- ✅ Cloud file storage (AWS S3, Cloudinary, etc.)
+- ✅ WebSocket for real-time task updates
 
 ---
 
