@@ -1,0 +1,23 @@
+{
+	"name": "express-management-rest-api",
+	"version": "1.0.0",
+	"description": "A **RESTful backend API** built with **Node.js**, **Express**, **MongoDB**, and **TypeScript** for managing projects, tasks, subtasks, team members, and notes — all secured with JWT authentication and role-based access control.",
+	"main": "index.js",
+	"type": "module",
+	"scripts": {
+		"dev": "node index.js",
+		"start": "node index.js",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/saddamarbaa/node-express-management-rest-api.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/saddamarbaa/node-express-management-rest-api/issues"
+	},
+	"homepage": "https://github.com/saddamarbaa/node-express-management-rest-api#readme"
+}
