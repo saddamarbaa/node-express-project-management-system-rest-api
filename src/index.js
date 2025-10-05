@@ -1,8 +1,11 @@
 import dotenv from "dotenv";
 
+import app from "./app.js";
+
 dotenv.config();
 
-console.log(process.env.S3_BUCKET);
-console.log(process.env.API_URL);
+const port = process.env.PORT || 3000;
 
-console.log("Hello, World! from nodemon");
+app.listen(port, () => {
+  console.log("Server is running on port " + port);
+});
