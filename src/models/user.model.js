@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
 const { Schema } = mongoose;
 
 const userSchema = new Schema(
@@ -63,6 +65,46 @@ userSchema.method.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
+userSchema.method.generateACcessToken = function () {
+  return jwt.sign(
+    { id: this._id, username: this.username, email: this.email },
+    process.env.ACCESS_TOKEN_SECRET,
+    { expiresIn: process.env.ACCESS_TOKEN_EXPIRY || "15m" },
+  );
+};
+
+userSchema.method.generateRefreshToken = function () {
+  return jwt.sign(
+    { id: this._id, username: this.username, email: this.email },
+    process.env.REFRESH_TOKEN_SECRET,
+    { expiresIn: process.env.REFRESH_TOKEN_EXPIRY || "7d" },
+  );
+};
+
+userSchema.method.generateTemporaryToken = function () {
+  const unHashToken = crypto.randomBytes(32).toString("hex");
+  const hashToken = crypto
+    .createHash("sha256")
+    .update(unHashToken)
+    .digest("hex");
+
+  const tokenExpiry = Date.now() + 30 * 60 * 1000; // 30 minutes from now
+  return { unHashToken, hashToken, tokenExpiry };
+  
+};
+
+userSchema.method.toJSON = function () {
+  const obj = this.toObject();
+  delete obj.password;
+  delete obj.refreshToken;
+  delete obj.forgetPasswordToken;
+  delete obj.forgetPasswordTokenExpiry;
+  delete obj.emailVerificationToken;
+  delete obj.emailVerificationTokenExpiry;
+  return obj;
+};
+
+//
 mongoose.model("User", userSchema);
 
 export default mongoose.model("User");
