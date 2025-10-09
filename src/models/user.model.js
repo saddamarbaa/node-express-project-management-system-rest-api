@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 
 const { Schema } = mongoose;
 
@@ -10,15 +11,15 @@ const userSchema = new Schema(
       type: String,
       required: true,
       lowercase: true,
-      unique: true,
+      // unique: true,
       trim: true,
       index: true,
       minlength: 3,
       maxlength: 30,
     },
-    fullNae: {
+    fullName: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
       minlength: 3,
       maxlength: 50,
@@ -50,8 +51,7 @@ const userSchema = new Schema(
   { timestamps: true },
 );
 
-userSchema.index({ username: 1 }, { unique: true });
-userSchema.index({ email: 1 }, { unique: true });
+// Note: `index: true` is already declared on the schema fields above; avoid duplicate index() calls.
 
 // Hash password before saving the user
 userSchema.pre("save", async function (next) {
@@ -61,11 +61,11 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.method.comparePassword = async function (candidatePassword) {
+userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-userSchema.method.generateACcessToken = function () {
+userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     { id: this._id, username: this.username, email: this.email },
     process.env.ACCESS_TOKEN_SECRET,
@@ -73,7 +73,7 @@ userSchema.method.generateACcessToken = function () {
   );
 };
 
-userSchema.method.generateRefreshToken = function () {
+userSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     { id: this._id, username: this.username, email: this.email },
     process.env.REFRESH_TOKEN_SECRET,
@@ -81,7 +81,7 @@ userSchema.method.generateRefreshToken = function () {
   );
 };
 
-userSchema.method.generateTemporaryToken = function () {
+userSchema.methods.generateTemporaryToken = function () {
   const unHashToken = crypto.randomBytes(32).toString("hex");
   const hashToken = crypto
     .createHash("sha256")
@@ -90,10 +90,9 @@ userSchema.method.generateTemporaryToken = function () {
 
   const tokenExpiry = Date.now() + 30 * 60 * 1000; // 30 minutes from now
   return { unHashToken, hashToken, tokenExpiry };
-  
 };
 
-userSchema.method.toJSON = function () {
+userSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;
   delete obj.refreshToken;
@@ -104,7 +103,4 @@ userSchema.method.toJSON = function () {
   return obj;
 };
 
-//
-mongoose.model("User", userSchema);
-
-export default mongoose.model("User");
+export default mongoose.model("User", userSchema);

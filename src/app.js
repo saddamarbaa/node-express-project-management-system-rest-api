@@ -1,7 +1,8 @@
 import express from "express";
 import cors from "cors";
 
-import healthCheckRouter from "./routes/healthCheck.route.js";
+import v1Router from "./routes/v1/index.js";
+import { API_PREFIX } from "./config/index.js";
 
 const app = express();
 
@@ -35,6 +36,8 @@ app.use(
   }),
 );
 
-app.use("/health", healthCheckRouter);
+console.log("API Prefix:", API_PREFIX);
+// Mount versioned API router
+app.use(API_PREFIX, v1Router);
 
 export default app;
