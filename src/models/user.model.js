@@ -11,9 +11,8 @@ const userSchema = new Schema(
       type: String,
       required: true,
       lowercase: true,
-      // unique: true,
       trim: true,
-      index: true,
+      // note: username is intentionally NOT unique; allow duplicates
       minlength: 3,
       maxlength: 30,
     },
@@ -54,8 +53,26 @@ const userSchema = new Schema(
 // Note: `index: true` is already declared on the schema fields above; avoid duplicate index() calls.
 
 // Hash password before saving the user
+// Virtual for confirmPassword (not persisted)
+userSchema.virtual("confirmPassword").set(function (value) {
+  this._confirmPassword = value;
+});
+
+// Validate confirmPassword and hash password before saving
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
+    // If confirmPassword was provided via virtual, compare
+    if (typeof this._confirmPassword === "undefined") {
+      // invalidate will create a ValidationError
+      this.invalidate("confirmPassword", "Please confirm your password");
+      return next(new Error("Validation failed"));
+    }
+
+    if (this._confirmPassword !== this.password) {
+      this.invalidate("confirmPassword", "Passwords do not match");
+      return next(new Error("Validation failed"));
+    }
+
     this.password = await bcrypt.hash(this.password, 10);
   }
   next();

@@ -1,10 +1,14 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 import v1Router from "./routes/v1/index.js";
 import { API_PREFIX } from "./config/index.js";
+import errorHandler from "./middlewares/error.middleware.js";
 
 const app = express();
+
+app.use(cookieParser());
 
 app.use(
   express.json({
@@ -36,8 +40,10 @@ app.use(
   }),
 );
 
-console.log("API Prefix:", API_PREFIX);
 // Mount versioned API router
 app.use(API_PREFIX, v1Router);
+
+// Centralized error handler (must be last)
+app.use(errorHandler);
 
 export default app;

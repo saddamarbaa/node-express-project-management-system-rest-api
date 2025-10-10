@@ -28,19 +28,22 @@ export const register = asyncHandler(async (req, res) => {
     ).send();
   }
 
-  // Check duplicates
-  const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+  // Check duplicate email only (usernames may be non-unique by design)
+  const existingUser = await User.findOne({ email });
   if (existingUser) {
     return new ApiResponse(
       res,
       409,
       null,
-      "User with given email or username already exists",
+      "User with given email already exists",
     ).send();
   }
 
   // Create user instance and save (password hashing handled by model pre-save)
   const newUser = new User({ username, email, password });
+  // Attach confirmPassword virtual so model can validate equality
+  if (req.body.confirmPassword)
+    newUser.confirmPassword = req.body.confirmPassword;
 
   // Generate email verification token here so we don't rely on model helpers
   const unHashedToken = crypto.randomBytes(32).toString("hex");
@@ -53,7 +56,34 @@ export const register = asyncHandler(async (req, res) => {
   newUser.emailVerificationToken = hashedToken;
   newUser.emailVerificationTokenExpiry = tokenExpiry;
 
-  await newUser.save();
+  try {
+    await newUser.save();
+  } catch (err) {
+    // Handle Mongoose validation errors
+    if (err && err.name === "ValidationError") {
+      const errors = Object.keys(err.errors).map((k) => ({
+        param: k,
+        msg: err.errors[k].message,
+      }));
+      return new ApiResponse(
+        res,
+        400,
+        null,
+        "Validation failed",
+        errors,
+      ).send();
+    }
+
+    // Handle duplicate key errors (E11000) gracefully
+    if (err && err.code === 11000) {
+      const dupField = err.keyValue ? Object.keys(err.keyValue)[0] : null;
+      const message = dupField
+        ? `Duplicate value for field: ${dupField}`
+        : "Duplicate key error";
+      return new ApiResponse(res, 409, null, message).send();
+    }
+    throw err;
+  }
 
   // Prepare email content and send
   const { emailHtml, emailText } = generateEmailTemplate(

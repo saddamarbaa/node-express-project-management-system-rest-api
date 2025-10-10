@@ -6,4 +6,5 @@ dist
 .env.production
 .vscode
 .idea
-coverage    
+coverage  
+	../.DS_Store
