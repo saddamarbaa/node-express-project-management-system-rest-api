@@ -109,6 +109,24 @@ userSchema.methods.generateTemporaryToken = function () {
   return { unHashToken, hashToken, tokenExpiry };
 };
 
+// Static helpers to find users by token (centralize hashing logic)
+userSchema.statics.findByVerificationToken = function (token, email) {
+  const hashed = crypto.createHash("sha256").update(token).digest("hex");
+  return this.findOne({
+    email,
+    emailVerificationToken: hashed,
+    emailVerificationTokenExpiry: { $gt: Date.now() },
+  });
+};
+
+userSchema.statics.findByResetToken = function (token) {
+  const hashed = crypto.createHash("sha256").update(token).digest("hex");
+  return this.findOne({
+    forgetPasswordToken: hashed,
+    forgetPasswordTokenExpiry: { $gt: Date.now() },
+  });
+};
+
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;

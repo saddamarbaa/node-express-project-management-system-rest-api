@@ -23,14 +23,24 @@ function createTransporter() {
     }
   }
 
+  // transporter = nodemailer.createTransport({
+  //   host: host || "localhost",
+  //   port,
+  //   secure,
+  //   auth: user && pass ? { user, pass } : undefined,
+  //   pool: true,
+  //   maxConnections: 5,
+  //   greetingTimeout: 30000,
+  // });
+
+  // Looking to send emails in production? Check out our Email API/SMTP product!
   transporter = nodemailer.createTransport({
-    host: host || "localhost",
-    port,
-    secure,
-    auth: user && pass ? { user, pass } : undefined,
-    pool: true,
-    maxConnections: 5,
-    greetingTimeout: 30000,
+    host: "sandbox.smtp.mailtrap.io",
+    port: 2525,
+    auth: {
+      user: "8ba430fa94a795",
+      pass: "1289c52609077d",
+    },
   });
 
   return transporter;

@@ -1,5 +1,13 @@
 import { Router } from "express";
-import { login, register } from "../controllers/auth.controller.js";
+import {
+  login,
+  register,
+  verifyEmail,
+  requestPasswordReset,
+  resetPassword,
+  refreshTokenHandler,
+  logout,
+} from "../controllers/auth.controller.js";
 import { validateRequest } from "../middlewares/validator.middleware.js";
 import { registerValidation, loginValidation } from "../validators/index.js";
 import {
@@ -11,39 +19,24 @@ const route = Router();
 
 route.post("/register", registerValidation, validateRequest, register);
 route.post("/login", loginValidation, validateRequest, login);
+
 route.post(
   "/forgot-password",
   emailValidation,
   validateRequest,
-  (req, res, next) =>
-    import("../controllers/auth.controller.js").then((m) =>
-      m.requestPasswordReset(req, res, next),
-    ),
+  requestPasswordReset,
 );
 route.post(
   "/reset-password",
   resetPasswordValidation,
   validateRequest,
-  (req, res, next) =>
-    import("../controllers/auth.controller.js").then((m) =>
-      m.resetPassword(req, res, next),
-    ),
+  resetPassword,
 );
 
-route.get("/verify-email", (req, res, next) =>
-  import("../controllers/auth.controller.js").then((m) =>
-    m.verifyEmail(req, res, next),
-  ),
-);
-route.post("/refresh-token", (req, res, next) =>
-  import("../controllers/auth.controller.js").then((m) =>
-    m.refreshTokenHandler(req, res, next),
-  ),
-);
-route.post("/logout", (req, res, next) =>
-  import("../controllers/auth.controller.js").then((m) =>
-    m.logout(req, res, next),
-  ),
-);
+// verifyEmail is available as a direct import (clean)
+route.get("/verify-email", verifyEmail);
+
+route.post("/refresh-token", refreshTokenHandler);
+route.post("/logout", logout);
 
 export default route;

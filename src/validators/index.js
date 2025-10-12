@@ -44,6 +44,17 @@ export const resetPasswordValidation = [
     .withMessage("Passwords do not match"),
 ];
 
+export const changePasswordValidation = [
+  body("oldPassword").notEmpty().withMessage("Old password is required"),
+  body("newPassword")
+    .isLength({ min: 6 })
+    .withMessage("New password must be at least 6 characters long"),
+  body("confirmPassword")
+    .optional()
+    .custom((value, { req }) => value === req.body.newPassword)
+    .withMessage("Passwords do not match"),
+];
+
 export const verifyEmailValidation = [
   body("token").notEmpty().withMessage("Token is required"),
 ];

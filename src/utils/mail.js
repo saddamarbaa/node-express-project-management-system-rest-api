@@ -26,7 +26,10 @@ export const emailVerificationMailgenContent = (username, otp) => ({
       button: {
         color: "#22BC66",
         text: "Confirm your account",
-        link: `${process.env.APP_URL}/api/v1/auth/verify-email?otp=${otp}`,
+        // If caller passed a full URL (frontend verify page), use that. Otherwise fall back to API verify URL.
+        link: String(otp).startsWith("http")
+          ? otp
+          : `${process.env.APP_URL}/api/v1/auth/verify-email?token=${otp}`,
       },
     },
     outro:
@@ -45,7 +48,9 @@ export const resetPasswordMailgenContent = (username, otp) => ({
       button: {
         color: "#DC4D2F",
         text: "Reset your password",
-        link: `${process.env.APP_URL}/api/v1/auth/reset-password?otp=${otp}`,
+        link: String(otp).startsWith("http")
+          ? otp
+          : `${process.env.APP_URL}/api/v1/auth/reset-password?token=${otp}`,
       },
     },
     outro:
@@ -67,4 +72,3 @@ export const generateEmailTemplate = (type, username, otp) => {
 
   return generateEmail(emailContent);
 };
-
