@@ -1,4 +1,3 @@
-import crypto from "crypto";
 import User from "../models/user.model.js";
 import { ApiResponse } from "../utils/app-response.js";
 import { asyncHandler } from "../utils/async-handler.js";
@@ -246,11 +245,32 @@ export const requestPasswordReset = asyncHandler(async (req, res) => {
       "If an account with that email exists, a password reset link will be sent.",
     ).send();
 
+  // Enforce per-user cooldown for reset emails to avoid abuse (default 5 minutes)
+  const cooldownMs =
+    (process.env.PASSWORD_RESET_COOLDOWN_MINUTES || 5) * 60 * 1000;
+  if (
+    user.lastPasswordResetAt &&
+    Date.now() - new Date(user.lastPasswordResetAt).getTime() < cooldownMs
+  ) {
+    const remaining = Math.ceil(
+      (cooldownMs -
+        (Date.now() - new Date(user.lastPasswordResetAt).getTime())) /
+        60000,
+    );
+    return new ApiResponse(
+      res,
+      429,
+      null,
+      `Please wait ${remaining} minute(s) before requesting another reset email.`,
+    ).send();
+  }
+
   // Use model helper for temporary token (keeps token generation consistent).
   // Note: generateTemporaryToken currently sets a 30-minute expiry.
   const { unHashToken, hashToken, tokenExpiry } = user.generateTemporaryToken();
   user.forgetPasswordToken = hashToken;
   user.forgetPasswordTokenExpiry = tokenExpiry;
+  user.lastPasswordResetAt = new Date();
   await user.save();
   const resetUrl = `${process.env.FRONTEND_URL || process.env.APP_URL}/reset-password?token=${unHashToken}&email=${user.email}`;
   const { emailHtml, emailText } = generateEmailTemplate(
