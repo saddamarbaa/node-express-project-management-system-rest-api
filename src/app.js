@@ -5,7 +5,8 @@ import { rateLimit } from "express-rate-limit";
 
 import v1Router from "./routes/v1/index.js";
 import { API_PREFIX } from "./config/index.js";
-import errorHandler from "./middlewares/error.middleware.js";
+import { errorHandler } from "./middlewares/errorHandler.middleware.js";
+import { notFound } from "./middlewares/notFound.middleware.js";
 
 const app = express();
 
@@ -55,7 +56,10 @@ app.use(
 // Mount versioned API router
 app.use(API_PREFIX, v1Router);
 
-// Centralized error handler (must be last)
+// Middleware for unmatched routes
+app.use(notFound);
+
+// Global error handler
 app.use(errorHandler);
 
 export default app;
